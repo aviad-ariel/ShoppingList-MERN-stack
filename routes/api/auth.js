@@ -14,7 +14,7 @@ router.post('/', (req, res) => {
     const { email, password } = req.body;
 
     if(!email || !password){
-        return res.status(400).json({msg: "Missing Fileds"});
+        return res.status(400).json({msg: "Missing Fields"});
     }
 
     User.findOne({ email })
@@ -37,7 +37,6 @@ router.post('/', (req, res) => {
                                     id: user.id,
                                     name: user.name,
                                     email: user.email,
-                                    
                                 }
                             })
                         }
@@ -45,7 +44,6 @@ router.post('/', (req, res) => {
                 })
         })
 });
-
 
 // @route GET api/auth/user
 // @desc Auth user
