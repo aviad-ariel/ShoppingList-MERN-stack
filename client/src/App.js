@@ -10,12 +10,12 @@ import { loadUser } from "./action/authAction";
 function App({isAuth}) {
   useEffect(() => {
     store.dispatch(loadUser());
-    console.log("99")
+    console.log(isAuth);
   });
   return (
     <Provider store={store}>
       <div className="App">
-        <NavigationBar />
+        <NavigationBar/>
         <Container>
           <ShoppingList />
         </Container>

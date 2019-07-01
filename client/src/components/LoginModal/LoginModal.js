@@ -13,33 +13,29 @@ import {
   ToastHeader
 } from "reactstrap";
 import { connect } from "react-redux";
-import { register } from "../../action/authAction";
 import { clearErrors } from "../../action/errorAction";
+import { login } from "../../action/authAction";
 
-const RegModal = ({ modal, SetModal, clearErrors, register, error, isAuth }) => {
-  const [name, SetName] = useState("");
+const LoginModal = ({ loginModal, SetLoginModal, clearErrors, login, error, isAuth }) => {
   const [email, SetEmail] = useState("");
   const [password, SetPassword] = useState("");
   const [toast, SetToast] = useState(false);
 
+
   const toggle = () => {
-    SetModal(!modal);
+    SetLoginModal(!loginModal);
     clearErrors();
   };
 
   useEffect(() => {
-      if(error.id === "REGISTER_FAIL"){
-        SetToast(true);
+    if(error.id === "LOGIN_FAIL"){
+      SetToast(true);
       }
-      else if(error.id === null && isAuth && modal){
-        SetToast(false)
-        toggle();
-        }
+    else if(error.id === null && isAuth && loginModal){
+      SetToast(false);
+      toggle();
+      }
     }, [error.id, isAuth]);
-
-  const onChangeName = e => {
-    SetName(e.target.value);
-  };
 
   const onChangeEmail = e => {
     SetEmail(e.target.value);
@@ -53,47 +49,36 @@ const RegModal = ({ modal, SetModal, clearErrors, register, error, isAuth }) => 
     e.preventDefault();
     clearErrors();
     // Create user object
-    const newUser = {
-      name,
+    const loginUser = {
       email,
       password
     };
 
     // Attempt to register
-    const reg = async() => {
-        await register(newUser);
+    const log = async() => {
+        await login(loginUser);
     };
     
     (async () => {
-        await reg()
+        await log()
     })()
-    
   };
 
   return (
     <div>
-      <Modal isOpen={modal} toggle={toggle} centered>
-        <ModalHeader toggle={toggle}>Register!</ModalHeader>
+      <Modal isOpen={loginModal} toggle={toggle} centered>
+        <ModalHeader toggle={toggle}>Login</ModalHeader>
         <ModalBody>
           <Form onSubmit={onSubmit}>
             <FormGroup>
             <Toast isOpen={toast}>
                 <ToastHeader icon="danger">
-                    Register
+                    Login
                 </ToastHeader>
                 <ToastBody>
-                    Register Failed:{error.msg.msg}
+                    Login Failed:{error.msg.msg}
                 </ToastBody>
             </Toast>
-              <Label for="name">Name:</Label>
-              <Input
-                type="text"
-                name="name"
-                id="name"
-                placeholder="Full Name"
-                className="mb-3"
-                onChange={onChangeName}
-              />
               <Label for="email">Email:</Label>
               <Input
                 type="email"
@@ -113,7 +98,7 @@ const RegModal = ({ modal, SetModal, clearErrors, register, error, isAuth }) => 
                 onChange={onChangePassword}
               />
               <Button color="dark" style={{ marginTop: "2rem" }} block>
-                Register
+                  Login
               </Button>
             </FormGroup>
           </Form>
@@ -130,5 +115,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { register, clearErrors }
-)(RegModal);
+  { login, clearErrors }
+)(LoginModal);
