@@ -12,7 +12,7 @@ import {
 import { connect } from "react-redux";
 import { addItem } from "../../action/itemActions";
 
-const ItemModal = ({ addItem, modal, SetModal }) => {
+const ItemModal = ({ addItem, modal, SetModal, user }) => {
   const [NewName, SetNewName] = useState("");
   const [NewQuantity, SetNewQuantity] = useState(1);
 
@@ -36,7 +36,7 @@ const ItemModal = ({ addItem, modal, SetModal }) => {
       quantity: NewQuantity
     };
 
-    addItem(newItem);
+    addItem(user._id, newItem);
 
     toggle();
   };
@@ -76,7 +76,8 @@ const ItemModal = ({ addItem, modal, SetModal }) => {
 
 const mapStateToProps = state => ({
   isAuth: state.auth.isAuth,
-  error: state.error
+  error: state.error,
+  user: state.auth.user
 });
 
 export default connect(

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   ListGroup,
@@ -15,13 +15,20 @@ import { getItems, deleteItem } from "../../action/itemActions";
 import EditItemModal from "../EditItemModal//EditItemModal";
 import PropsTypes from "prop-types";
 import MediaQuery from "react-responsive";
+import { loadUser } from "../../action/authAction";
 
-const ShoppingList = ({ getItems, item, deleteItem }) => {
+const ShoppingList = ({
+  getItems,
+  item,
+  deleteItem,
+  user,
+  isAuth,
+  loadUser
+}) => {
   const [modal, SetModal] = useState(false);
   const [EditName, SetEditName] = useState("");
   const [EditQuantity, SetEditQuantity] = useState(1);
   const [EditModal, SetEditModal] = useState(false);
-
   const toggle = () => {
     SetModal(!modal);
   };
@@ -30,9 +37,17 @@ const ShoppingList = ({ getItems, item, deleteItem }) => {
     SetEditModal(!EditModal);
   };
 
-  useState(() => {
-    getItems();
-  });
+  useEffect(() => {
+    if (isAuth) {
+      loadUser();
+    }
+  }, [isAuth]);
+
+  useEffect(() => {
+    if (user) {
+      getItems(user._id);
+    }
+  }, [user]);
 
   return (
     <Container>
@@ -64,7 +79,8 @@ const ShoppingList = ({ getItems, item, deleteItem }) => {
                               color="danger"
                               size="sm"
                               onClick={() => {
-                                deleteItem(_id);
+                                deleteItem(user._id, name);
+                                getItems(user._id);
                               }}
                             >
                               &times;
@@ -89,7 +105,8 @@ const ShoppingList = ({ getItems, item, deleteItem }) => {
                               onClick={() => {
                                 SetEditName(name);
                                 SetEditQuantity(quantity);
-                                deleteItem(_id);
+                                deleteItem(user._id, name);
+                                getItems(user._id);
                                 toggleEdit();
                               }}
                             >
@@ -116,7 +133,8 @@ const ShoppingList = ({ getItems, item, deleteItem }) => {
                               color="danger"
                               size="sm"
                               onClick={() => {
-                                deleteItem(_id);
+                                deleteItem(user._id, name);
+                                getItems(user._id);
                               }}
                             >
                               &times;
@@ -138,7 +156,8 @@ const ShoppingList = ({ getItems, item, deleteItem }) => {
                               onClick={() => {
                                 SetEditName(name);
                                 SetEditQuantity(quantity);
-                                deleteItem(_id);
+                                deleteItem(user._id, name);
+                                getItems(user._id);
                                 toggleEdit();
                               }}
                             >
@@ -164,10 +183,12 @@ ShoppingList.PropsTypes = {
   item: PropsTypes.object.isRequired
 };
 const maoStateToProps = state => ({
-  item: state.item
+  item: state.item,
+  isAuth: state.auth.isAuth,
+  user: state.auth.user
 });
 
 export default connect(
   maoStateToProps,
-  { getItems, deleteItem }
+  { getItems, deleteItem, loadUser }
 )(ShoppingList);

@@ -16,11 +16,18 @@ import { connect } from "react-redux";
 import { clearErrors } from "../../action/errorAction";
 import { login } from "../../action/authAction";
 
-const LoginModal = ({ loginModal, SetLoginModal, clearErrors, login, error, isAuth }) => {
+const LoginModal = ({
+  loginModal,
+  SetLoginModal,
+  clearErrors,
+  login,
+  error,
+  isAuth,
+  user
+}) => {
   const [email, SetEmail] = useState("");
   const [password, SetPassword] = useState("");
   const [toast, SetToast] = useState(false);
-
 
   const toggle = () => {
     SetLoginModal(!loginModal);
@@ -28,14 +35,13 @@ const LoginModal = ({ loginModal, SetLoginModal, clearErrors, login, error, isAu
   };
 
   useEffect(() => {
-    if(error.id === "LOGIN_FAIL"){
+    if (error.id === "LOGIN_FAIL") {
       SetToast(true);
-      }
-    else if(error.id === null && isAuth && loginModal){
+    } else if (error.id === null && isAuth && loginModal && user) {
       SetToast(false);
       toggle();
-      }
-    }, [error.id, isAuth]);
+    }
+  }, [error.id, isAuth, user]);
 
   const onChangeEmail = e => {
     SetEmail(e.target.value);
@@ -55,13 +61,7 @@ const LoginModal = ({ loginModal, SetLoginModal, clearErrors, login, error, isAu
     };
 
     // Attempt to register
-    const log = async() => {
-        await login(loginUser);
-    };
-    
-    (async () => {
-        await log()
-    })()
+    login(loginUser);
   };
 
   return (
@@ -71,14 +71,10 @@ const LoginModal = ({ loginModal, SetLoginModal, clearErrors, login, error, isAu
         <ModalBody>
           <Form onSubmit={onSubmit}>
             <FormGroup>
-            <Toast isOpen={toast}>
-                <ToastHeader icon="danger">
-                    Login
-                </ToastHeader>
-                <ToastBody>
-                    Login Failed:{error.msg.msg}
-                </ToastBody>
-            </Toast>
+              <Toast isOpen={toast}>
+                <ToastHeader icon="danger">Login</ToastHeader>
+                <ToastBody>Login Failed:{error.msg.msg}</ToastBody>
+              </Toast>
               <Label for="email">Email:</Label>
               <Input
                 type="email"
@@ -98,7 +94,7 @@ const LoginModal = ({ loginModal, SetLoginModal, clearErrors, login, error, isAu
                 onChange={onChangePassword}
               />
               <Button color="dark" style={{ marginTop: "2rem" }} block>
-                  Login
+                Login
               </Button>
             </FormGroup>
           </Form>
@@ -111,6 +107,7 @@ const LoginModal = ({ loginModal, SetLoginModal, clearErrors, login, error, isAu
 const mapStateToProps = state => ({
   error: state.error,
   isAuth: state.auth.isAuth,
+  user: state.auth.user
 });
 
 export default connect(
